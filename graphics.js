@@ -8,7 +8,7 @@ function initShaderProgram(gl, vertexShaderSource, fragmentShaderSoruce) {
     gl.linkProgram(shaderProgram);
 
     if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        console.log(gl.getProgramInfoLog(shaderProgram));
+        alert(gl.getProgramInfoLog(shaderProgram));
         return null;
     }
 
@@ -23,7 +23,7 @@ function loadShader(gl, type, source) {
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.log(gl.getShaderInfoLog(shader));
+        alert(gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
     }
@@ -31,21 +31,21 @@ function loadShader(gl, type, source) {
     return shader;
 }
 
-function initPositionBuffer(gl, positions) {
-    let positionBuffer = gl.createBuffer();
+function initVertexBuffer(gl, vertices) {
+    let vertexBuffer = gl.createBuffer();
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
     gl.bufferData(
         gl.ARRAY_BUFFER,
-        new Float32Array(positions),
+        new Float32Array(vertices),
         gl.STATIC_DRAW
     );
 
-    return positionBuffer;
+    return vertexBuffer;
 }
 
-function drawScene(gl, shaderProgram, positionBuffer, numPositions) {
+function drawScene(gl, shaderProgram, vertexBuffer, numVertices) {
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -54,7 +54,7 @@ function drawScene(gl, shaderProgram, positionBuffer, numPositions) {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.clear(gl.DEPTH_BUFFER_BIT);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
     let posComponents = 2;
     let colorComponents = 4;
@@ -87,7 +87,7 @@ function drawScene(gl, shaderProgram, positionBuffer, numPositions) {
 
     gl.useProgram(shaderProgram);
 
-    gl.drawArrays(gl.TRIANGLES, 0, numPositions / (posComponents + colorComponents));
+    gl.drawArrays(gl.TRIANGLES, 0, numVertices / (posComponents + colorComponents));
 }
 
 function main() {
@@ -129,15 +129,15 @@ function main() {
 
     let shaderProgram = initShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
 
-    let positions = [
+    let vertices = [
         0.0, 0.8, 1.0, 0.0, 0.0, 1.0,
         -0.8, -0.8, 0.0, 1.0, 0.0, 1.0,
         0.8, -0.8, 0.0, 0.0, 1.0, 1.0,
     ];
 
-    let positionBuffer = initPositionBuffer(gl, positions);
+    let vertexBuffer = initVertexBuffer(gl, vertices);
 
-    drawScene(gl, shaderProgram, positionBuffer, positions.length);
+    drawScene(gl, shaderProgram, vertexBuffer, vertices.length);
 }
 
 main();
